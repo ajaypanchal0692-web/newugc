@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "personas": [
+    {
+      "id": "male-01",
+      "gender": "male",
+      "name": "Arjun",
+      "age_range": "26-32",
+      "region": "India",
+      "archetype": "Confident everyday creator",
+      "appearance": "Approachable Indian man with natural grooming, expressive eyes, realistic skin texture and contemporary casual styling.",
+      "performance": "Conversational, confident, energetic without feeling scripted.",
+      "camera_presence": "Comfortable direct-to-camera delivery with natural gestures and believable eye contact.",
+      "voice": "Warm, clear Indian English; conversational pace.",
+      "best_for": ["fashion", "grooming", "electronics", "lifestyle", "food"]
+    },
+    {
+      "id": "female-01",
+      "gender": "female",
+      "name": "Maya",
+      "age_range": "24-30",
+      "region": "India",
+      "archetype": "Relatable lifestyle creator",
+      "appearance": "Approachable Indian woman with natural makeup, realistic skin texture, expressive eyes and modern everyday styling.",
+      "performance": "Friendly, authentic, expressive and persuasive without exaggerated influencer behavior.",
+      "camera_presence": "Natural selfie-style framing, direct eye contact and subtle hand gestures.",
+      "voice": "Warm, clear Indian English; friendly conversational pace.",
+      "best_for": ["beauty", "fashion", "home", "wellness", "lifestyle"]
+    }
+  ]
+}
