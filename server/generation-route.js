@@ -2,7 +2,6 @@ import { SeedanceProvider } from '../src/providers/seedance.js';
 import { SeedanceHttpTransport } from '../src/providers/seedance-http.js';
 import { GenerationService } from '../src/generation/service.js';
 
-// Framework-neutral handler. Mount this behind your server's POST /api/generations route.
 export function createGenerationHandler({ store }) {
   const provider = new SeedanceProvider({ transport: new SeedanceHttpTransport() });
   const service = new GenerationService({ provider, store });
@@ -21,6 +20,10 @@ export function createGenerationHandler({ store }) {
       durationSeconds: body.durationSeconds,
       aspectRatio: body.aspectRatio,
       referenceImage: body.referenceImage,
+      referenceImages: body.referenceImages,
+      resolution: body.resolution,
+      generateAudio: body.generateAudio,
+      watermark: body.watermark,
     });
 
     return { status: job.status === 'failed' ? 502 : 202, body: job };
