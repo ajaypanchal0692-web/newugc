@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { createGenerationHandler } from './generation-route.js';
 import { createStatusHandler } from './status-route.js';
+import { healthHandler } from './health-route.js';
 import { MemoryGenerationStore } from './store.js';
 import { SeedanceProvider } from '../src/providers/seedance.js';
 import { SeedanceHttpTransport } from '../src/providers/seedance-http.js';
@@ -21,29 +22,28 @@ async function readJson(request) {
 }
 
 function send(response, status, body) {
-  response.writeHead(status, {
-    'content-type': 'application/json; charset=utf-8',
-    'cache-control': 'no-store',
-  });
+  response.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
   response.end(JSON.stringify(body));
 }
 
 const server = http.createServer(async (request, response) => {
   try {
+    if (request.method === 'GET' && request.url === '/health') {
+      const result = healthHandler(request);
+      return send(response, result.status, result.body);
+    }
     if (request.method === 'POST' && request.url === '/api/generations') {
       const result = await postGeneration({ method: request.method, body: await readJson(request) });
       return send(response, result.status, result.body);
     }
-
     const match = request.url?.match(/^\/api\/generations\/([^/?]+)$/);
     if (request.method === 'GET' && match) {
       const result = await getStatus({ method: request.method }, decodeURIComponent(match[1]));
       return send(response, result.status, result.body);
     }
-
-    send(response, 404, { error: 'Not found' });
+    return send(response, 404, { error: 'Not found' });
   } catch (error) {
-    send(response, error.statusCode || 500, { error: error instanceof Error ? error.message : String(error) });
+    return send(response, error.statusCode || 500, { error: error instanceof Error ? error.message : String(error) });
   }
 });
 
