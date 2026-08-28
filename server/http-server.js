@@ -6,6 +6,7 @@ import { MemoryGenerationStore } from './store.js';
 import { SeedanceProvider } from '../src/providers/seedance.js';
 import { SeedanceHttpTransport } from '../src/providers/seedance-http.js';
 import { GenerationService } from '../src/generation/service.js';
+import { rateLimit, SECURITY_LIMITS } from './security.js';
 
 const store = new MemoryGenerationStore();
 const provider = new SeedanceProvider({ transport: new SeedanceHttpTransport() });
@@ -15,15 +16,25 @@ const getStatus = createStatusHandler({ store, service });
 
 async function readJson(request) {
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > SECURITY_LIMITS.MAX_BODY_BYTES) throw Object.assign(new Error('Request body too large'), { statusCode: 413 });
+    chunks.push(chunk);
+  }
   const text = Buffer.concat(chunks).toString('utf8');
   if (!text) return {};
   try { return JSON.parse(text); } catch { throw Object.assign(new Error('Invalid JSON body'), { statusCode: 400 }); }
 }
 
-function send(response, status, body) {
-  response.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+function send(response, status, body, headers = {}) {
+  response.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers });
   response.end(JSON.stringify(body));
+}
+
+function clientKey(request) {
+  const forwarded = request.headers['x-forwarded-for'];
+  return String(forwarded || request.socket.remoteAddress || 'anonymous').split(',')[0].trim();
 }
 
 const server = http.createServer(async (request, response) => {
@@ -33,6 +44,8 @@ const server = http.createServer(async (request, response) => {
       return send(response, result.status, result.body);
     }
     if (request.method === 'POST' && request.url === '/api/generations') {
+      const limit = rateLimit(clientKey(request));
+      if (!limit.allowed) return send(response, 429, { error: 'Rate limit exceeded' }, { 'retry-after': String(limit.retryAfterSeconds) });
       const result = await postGeneration({ method: request.method, body: await readJson(request) });
       return send(response, result.status, result.body);
     }
