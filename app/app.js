@@ -6,7 +6,7 @@ const creators = {
 let selectedCreator = 'male';
 let concepts = [];
 let selectedConcept = 0;
-let productImageDataUrl = null;
+let productImageUrl = null;
 let activeJobId = null;
 let pollTimer = null;
 
@@ -25,9 +25,21 @@ $('product-image').addEventListener('change', async (event) => {
   const preview = $('image-preview');
   preview.querySelector('img').src = URL.createObjectURL(file);
   preview.classList.remove('hidden');
-  const reader = new FileReader();
-  reader.onload = () => { productImageDataUrl = reader.result; };
-  reader.readAsDataURL(file);
+  productImageUrl = null;
+  $('image-upload-status').textContent = 'Uploading product image…';
+  try {
+    const response = await fetch('/api/uploads', {
+      method: 'POST',
+      headers: { 'content-type': file.type || 'application/octet-stream', 'x-file-name': encodeURIComponent(file.name) },
+      body: file,
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'Image upload failed');
+    productImageUrl = payload.url;
+    $('image-upload-status').textContent = 'Product image ready for video generation.';
+  } catch (error) {
+    $('image-upload-status').textContent = `Image upload failed: ${error.message}`;
+  }
 });
 
 function buildConcepts(input) {
@@ -75,9 +87,10 @@ async function generateSelectedVideo() {
     const configResponse = await fetch('/api/config');
     const config = await configResponse.json();
     if (!config.configured) throw new Error('Seedance is not configured yet. Add SEEDANCE_API_KEY and SEEDANCE_MODEL in Vercel.');
+    if ($('product-image').files?.length && !productImageUrl) throw new Error('Wait for the product image upload to finish, then generate again.');
     const response = await fetch('/api/generations', {
       method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ projectId: `studio-${Date.now()}`, prompt: concept.prompt, durationSeconds: Number($('duration').value), aspectRatio: $('format').value, referenceImage: productImageDataUrl, resolution: '720p', generateAudio: true, watermark: false }),
+      body: JSON.stringify({ projectId: `studio-${Date.now()}`, prompt: concept.prompt, durationSeconds: Number($('duration').value), aspectRatio: $('format').value, referenceImage: productImageUrl, resolution: '720p', generateAudio: true, watermark: false }),
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || 'Generation request failed');
