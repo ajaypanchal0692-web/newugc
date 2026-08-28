@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "fields": [
+    {"id":"name","type":"string","required":true},
+    {"id":"category","type":"string","required":true},
+    {"id":"brand","type":"string","required":false},
+    {"id":"key_benefits","type":"string[]","required":false},
+    {"id":"features","type":"string[]","required":false},
+    {"id":"color","type":"string","required":false},
+    {"id":"material","type":"string","required":false},
+    {"id":"target_audience","type":"string","required":false},
+    {"id":"price","type":"string","required":false},
+    {"id":"claims","type":"string[]","required":false},
+    {"id":"reference_image","type":"string","required":false}
+  ]
+}
