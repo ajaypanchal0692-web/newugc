@@ -1,0 +1,19 @@
+instructions: |
+  This repository is the NewUGC application. Use npm for package management.
+  Do not commit secrets or provider API keys. Keep Seedance and Vercel credentials in environment variables.
+  For local development, run the Node server on port 3000.
+
+scripts:
+  - name: Setup
+    command: npm install
+    triggers:
+      - session.create
+  - name: Build
+    command: npm run build
+  - name: Test
+    command: npm test
+  - name: Run
+    command: npm start
+
+server_ready_pattern: '(?i)newugc server listening on http://localhost:3000'
+auto_open_in_browser: true
