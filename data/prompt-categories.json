@@ -1,0 +1,12 @@
+{
+  "categories": [
+    {"id": "ugc", "name": "UGC"},
+    {"id": "advertising", "name": "Advertising & Commercial"},
+    {"id": "social", "name": "Social Media"},
+    {"id": "cinematic", "name": "Cinematic"},
+    {"id": "product-demo", "name": "Product Demonstration"},
+    {"id": "testimonial", "name": "Testimonial"},
+    {"id": "unboxing", "name": "Unboxing"},
+    {"id": "fashion", "name": "Fashion"}
+  ]
+}

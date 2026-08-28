@@ -1,0 +1,10 @@
+{
+  "name": "newugc",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node app/server.js",
+    "test": "node --test 'src/**/*.test.js' 'server/**/*.test.js'"
+  }
+}
