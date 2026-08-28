@@ -1,15 +1,12 @@
 import { createGenerationJob, updateGenerationJob, JOB_STATES } from './job.js';
 
-/**
- * Application-level orchestration. Persistence can be injected later.
- */
 export class GenerationService {
   constructor({ provider, store }) {
     this.provider = provider;
     this.store = store;
   }
 
-  async submit({ projectId, prompt, durationSeconds, aspectRatio, referenceImage }) {
+  async submit({ projectId, prompt, durationSeconds, aspectRatio, referenceImage, referenceImages, resolution, generateAudio, watermark }) {
     const job = createGenerationJob({ projectId, prompt, provider: this.provider.name });
     await this.store.save(job);
 
@@ -19,11 +16,18 @@ export class GenerationService {
         durationSeconds,
         aspectRatio,
         referenceImage,
+        referenceImages,
+        resolution,
+        generateAudio,
+        watermark,
       });
+
+      const providerJobId = remote?.id || remote?.task_id || remote?.task?.id;
+      if (!providerJobId) throw new Error('Seedance response did not contain a task ID');
 
       const updated = updateGenerationJob(job, {
         status: JOB_STATES.PROCESSING,
-        providerJobId: remote.id,
+        providerJobId,
       });
       await this.store.save(updated);
       return updated;
