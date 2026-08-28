@@ -1,15 +1,12 @@
 import { createGenerationJob, updateGenerationJob, JOB_STATES } from './job.js';
 
-/**
- * Application-level orchestration. Persistence can be injected later.
- */
 export class GenerationService {
   constructor({ provider, store }) {
     this.provider = provider;
     this.store = store;
   }
 
-  async submit({ projectId, prompt, durationSeconds, aspectRatio, referenceImage }) {
+  async submit({ projectId, prompt, durationSeconds, aspectRatio, referenceImage, generateAudio = true, resolution = '720p', watermark = false }) {
     const job = createGenerationJob({ projectId, prompt, provider: this.provider.name });
     await this.store.save(job);
 
@@ -19,8 +16,10 @@ export class GenerationService {
         durationSeconds,
         aspectRatio,
         referenceImage,
+        generateAudio,
+        resolution,
+        watermark,
       });
-
       const updated = updateGenerationJob(job, {
         status: JOB_STATES.PROCESSING,
         providerJobId: remote.id,
