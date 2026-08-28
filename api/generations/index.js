@@ -17,6 +17,9 @@ export default async function handler(request, response) {
       durationSeconds: body.durationSeconds,
       aspectRatio: body.aspectRatio,
       referenceImage: body.referenceImage,
+      generateAudio: body.generateAudio !== false,
+      resolution: body.resolution || '720p',
+      watermark: Boolean(body.watermark),
     });
     return response.status(job.status === 'failed' ? 502 : 202).json({ ...job, storage: await store.status() });
   } catch (error) {
