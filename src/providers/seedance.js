@@ -1,10 +1,5 @@
 import { VideoProvider } from './provider.js';
 
-/**
- * Seedance adapter boundary.
- * The actual API transport is intentionally injected so credentials and
- * endpoint details remain outside the prompt/campaign domain.
- */
 export class SeedanceProvider extends VideoProvider {
   constructor({ transport }) {
     super('seedance');
@@ -20,6 +15,9 @@ export class SeedanceProvider extends VideoProvider {
       durationSeconds: request.durationSeconds,
       aspectRatio: request.aspectRatio,
       referenceImage: request.referenceImage,
+      generateAudio: request.generateAudio,
+      resolution: request.resolution,
+      watermark: request.watermark,
     });
   }
 
