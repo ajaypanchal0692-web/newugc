@@ -15,69 +15,34 @@
       <button class="ghost" type="button">Projects</button>
     </div>
   </header>
-
   <main class="studio">
     <section class="hero">
-      <div>
-        <p class="eyebrow">AI UGC VIDEO STUDIO</p>
-        <h1>Turn a product into<br /><em>scroll-stopping UGC.</em></h1>
-        <p class="hero-copy">Build a creator-led campaign, generate multiple concepts, and prepare a production-ready video prompt.</p>
-      </div>
-      <div class="stepper" aria-label="Workflow steps">
-        <span class="active">01 Product</span><b>→</b><span>02 Creator</span><b>→</b><span>03 Campaign</span><b>→</b><span>04 Generate</span>
-      </div>
+      <div><p class="eyebrow">AI UGC VIDEO STUDIO</p><h1>Turn a product into<br /><em>scroll-stopping UGC.</em></h1><p class="hero-copy">Build a creator-led campaign, generate multiple concepts, and prepare a production-ready video prompt.</p></div>
+      <div class="stepper" aria-label="Workflow steps"><span class="active">01 Product</span><b>→</b><span>02 Creator</span><b>→</b><span>03 Campaign</span><b>→</b><span>04 Generate</span></div>
     </section>
-
     <form id="campaign-form" class="workspace">
       <section class="panel product-panel">
         <div class="panel-head"><div><span class="number">01</span><h2>Product</h2></div><span class="required">Required</span></div>
-        <label class="upload" for="product-image">
-          <input id="product-image" type="file" accept="image/*" />
-          <div class="upload-icon">＋</div>
-          <strong>Drop product image</strong>
-          <small>PNG, JPG or WEBP · optional</small>
-        </label>
-        <div id="image-preview" class="image-preview hidden"><img alt="Product preview" /></div>
+        <label class="upload" for="product-image"><input id="product-image" type="file" accept="image/jpeg,image/png,image/webp" /><div class="upload-icon">＋</div><strong>Drop product image</strong><small>PNG, JPG or WEBP · max 10 MB</small></label>
+        <div id="image-preview" class="image-preview hidden"><img alt="Product preview" /></div><small id="image-upload-status" class="upload-status" role="status">Optional — upload a reference image for video generation.</small>
         <label>Product name<input id="product-name" required placeholder="e.g. Premium Cotton T-Shirt" /></label>
-        <div class="two-col">
-          <label>Category<input id="product-category" required placeholder="Fashion" /></label>
-          <label>Color<input id="product-color" placeholder="Black" /></label>
-        </div>
+        <div class="two-col"><label>Category<input id="product-category" required placeholder="Fashion" /></label><label>Color<input id="product-color" placeholder="Black" /></label></div>
         <label>Key benefits<input id="product-benefits" placeholder="Soft, breathable, comfortable" /></label>
       </section>
-
       <section class="panel creator-panel">
         <div class="panel-head"><div><span class="number">02</span><h2>Creator</h2></div></div>
-        <div class="creator-grid">
-          <button class="creator-card selected" type="button" data-creator="male">
-            <div class="avatar male">A</div><div><strong>Arjun</strong><span>Male · 26–32</span><small>Confident everyday creator</small></div><i>✓</i>
-          </button>
-          <button class="creator-card" type="button" data-creator="female">
-            <div class="avatar female">M</div><div><strong>Maya</strong><span>Female · 24–30</span><small>Relatable lifestyle creator</small></div><i>✓</i>
-          </button>
-        </div>
-        <label>Creator direction<textarea id="creator-direction" rows="3" placeholder="Natural, authentic, conversational...">Natural, authentic, conversational and persuasive without feeling scripted.</textarea></label>
+        <div class="creator-grid"><button class="creator-card selected" type="button" data-creator="male"><div class="avatar male">A</div><div><strong>Arjun</strong><span>Male · 26–32</span><small>Confident everyday creator</small></div><i>✓</i></button><button class="creator-card" type="button" data-creator="female"><div class="avatar female">M</div><div><strong>Maya</strong><span>Female · 24–30</span><small>Relatable lifestyle creator</small></div><i>✓</i></button></div>
+        <label>Creator direction<textarea id="creator-direction" rows="3">Natural, authentic, conversational and persuasive without feeling scripted.</textarea></label>
       </section>
-
       <section class="panel campaign-panel">
         <div class="panel-head"><div><span class="number">03</span><h2>Campaign</h2></div></div>
         <label>Campaign objective<select id="objective"><option>Drive product-page conversions</option><option>Build product awareness</option><option>Launch a new product</option><option>Increase social engagement</option></select></label>
         <label>Video style<select id="style"><option>Authentic UGC</option><option>Product testimonial</option><option>Fast product demo</option><option>Unboxing + first impression</option><option>Before / after</option></select></label>
-        <div class="two-col">
-          <label>Duration<select id="duration"><option value="15">15 seconds</option><option value="10">10 seconds</option><option value="30">30 seconds</option></select></label>
-          <label>Format<select id="format"><option value="9:16">9:16 Vertical</option><option value="1:1">1:1 Square</option><option value="16:9">16:9 Landscape</option></select></label>
-        </div>
-        <label>Key message<textarea id="message" rows="3" placeholder="What should the creator communicate?"></textarea></label>
-        <button class="generate" type="submit">Generate 5 UGC concepts <span>→</span></button>
+        <div class="two-col"><label>Duration<select id="duration"><option value="15">15 seconds</option><option value="10">10 seconds</option><option value="30">30 seconds</option></select></label><label>Format<select id="format"><option value="9:16">9:16 Vertical</option><option value="1:1">1:1 Square</option><option value="16:9">16:9 Landscape</option></select></label></div>
+        <label>Key message<textarea id="message" rows="3" placeholder="What should the creator communicate?"></textarea></label><button class="generate" type="submit">Generate 5 UGC concepts <span>→</span></button>
       </section>
     </form>
-
-    <section id="results" class="results hidden">
-      <div class="results-head"><div><p class="eyebrow">CONCEPTS</p><h2>Your UGC campaign</h2></div><button id="copy-all" class="ghost" type="button">Copy selected prompt</button></div>
-      <div id="concept-list" class="concept-list"></div>
-      <div id="generation-status" class="generation-status hidden" role="status"></div>
-      <div id="video-preview" class="video-preview hidden"><h3>Generated video</h3><video controls playsinline></video></div>
-    </section>
+    <section id="results" class="results hidden"><div class="results-head"><div><p class="eyebrow">CONCEPTS</p><h2>Your UGC campaign</h2></div><button id="copy-all" class="ghost" type="button">Copy selected prompt</button></div><div id="concept-list" class="concept-list"></div><div id="generation-status" class="generation-status hidden" role="status"></div><div id="video-preview" class="video-preview hidden"><h3>Generated video</h3><video controls playsinline></video></div></section>
   </main>
   <script type="module" src="./app.js"></script>
 </body>
