@@ -1,16 +1,20 @@
-import { createStatusHandler } from '../../server/status-route.js';
-import { MemoryGenerationStore } from '../../server/store.js';
+import jobs from '../_generation-store.js';
 import { SeedanceProvider } from '../../src/providers/seedance.js';
 import { SeedanceHttpTransport } from '../../src/providers/seedance-http.js';
-import { GenerationService } from '../../src/generation/service.js';
 
-const store = new MemoryGenerationStore();
-const provider = new SeedanceProvider({ transport: new SeedanceHttpTransport() });
-const service = new GenerationService({ provider, store });
-const handle = createStatusHandler({ store, service });
+const store = { async save(job) { jobs.set(job.id, job); return job; }, async get(id) { return jobs.get(id) || null; } };
 
 export default async function handler(request, response) {
+  if (request.method !== 'GET') return response.status(405).json({ error: 'Method not allowed' });
   const id = request.query?.id;
-  const result = await handle({ method: request.method }, id);
-  response.status(result.status).json(result.body);
+  const job = await store.get(id);
+  if (!job) return response.status(404).json({ error: 'generation job not found' });
+  if (job.status === 'completed' || job.status === 'failed') return response.status(200).json(job);
+  if (!job.providerJobId) return response.status(200).json(job);
+  try {
+    const remote = await new SeedanceProvider({ transport: new SeedanceHttpTransport() }).getGenerationStatus(job.providerJobId);
+    const updated = { ...job, status: remote.status, outputUrl: remote.outputUrl || job.outputUrl, error: remote.error || job.error, updatedAt: new Date().toISOString() };
+    await store.save(updated);
+    return response.status(200).json(updated);
+  } catch (error) { return response.status(502).json({ error: error instanceof Error ? error.message : String(error) }); }
 }
