@@ -35,3 +35,5 @@ The Vercel deployment exposes `GET /api/health` and returns `{ "ok": true, "serv
 ## Status
 
 MVP implementation consolidated on `main`; production generation requires valid Seedance credentials/model configuration and durable job/media storage.
+
+Vercel static output is built into `public/` by `scripts/build.mjs` so the Studio and API functions deploy together.
